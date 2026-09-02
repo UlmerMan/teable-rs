@@ -5,13 +5,18 @@ use std::path;
 use std::time::Duration;
 use std::sync::Arc;
 
+use reqwest::retry::Builder;
 use reqwest::{Body, Method, Url};
+use reqwest_middleware::ClientWithMiddleware;
+use reqwest_middleware::ClientBuilder as MwClientBuilder;
+use reqwest_retry::RetryTransientMiddleware;
+use reqwest_retry::policies::{ExponentialBackoff, ExponentialBackoffBuilder};
 use secrecy::SecretString;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 
 pub struct TeableClient {
-    http: reqwest::Client,
+    http: ClientWithMiddleware,
     base_url: String,
     auth: Arc<dyn AuthProvider>,
 }
@@ -65,20 +70,25 @@ impl TeableClientBuilder {
             Url::parse("https://app.teable.ai").expect("Invalid default URL")
         });
 
-        let http = reqwest::Client::builder()
+        let inner_http = reqwest::Client::builder()
             .timeout(self.timeout)
             .user_agent(self.user_agent)
             .tls_danger_accept_invalid_certs(self.danger_accept_invalid_certs)
             .build()?;
+
+        let retry_policy = ExponentialBackoff::builder()
+            .build_with_max_retries(self.max_retries);
+
+        let http = MwClientBuilder::new(inner_http)
+            .with(RetryTransientMiddleware::new_with_policy(retry_policy))
+            .build();
 
         Ok(TeableClient {
             http,
             base_url: base_url.to_string(),
             auth: Arc::new(PersonalAccessToken::new(token)),
         })
-            
     }
-
 }
 
 impl TeableClient {
@@ -93,17 +103,15 @@ impl TeableClient {
         let mut req = self.http.request(method, url);
         req = self.auth.apply(req);
 
-        
         if let Some(query) = query {
             req = req.query(query);
         }
-
         if let Some(body) = body {
             req = req.json(body);
         }
 
-        let resp = req.send().await?;
-        
+        let resp = req.send().await?;   // ← Achtung, siehe Punkt 5
+
         if !resp.status().is_success() {
             return Err(ClientError::Api {
                 status: resp.status().as_u16(),
@@ -112,7 +120,7 @@ impl TeableClient {
             });
         }
 
-        let body = resp.json().await?;
+        let body: Resp = resp.json().await?;
         Ok(body)
     }
 }

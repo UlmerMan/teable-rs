@@ -1,4 +1,4 @@
-use reqwest::RequestBuilder;
+use reqwest_middleware::RequestBuilder;
 use secrecy::{ExposeSecret, SecretString};
 
 pub trait AuthProvider: Send + Sync {
