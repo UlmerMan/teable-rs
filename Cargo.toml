@@ -5,15 +5,26 @@ edition = "2024"
 
 [features]
 default = ["async"]
-async = ["reqwest/default"]
+
+async = []
 blocking = ["reqwest/blocking"]
+
+[[example]]
+name = "base_example"
+path = "examples/base_example/src/main.rs"
 
 [dependencies]
 maybe-async = "0.2.11"
-reqwest = {version = "0.13.4", default-features = false, features = ["json", "query"]}
+maybe-async-cfg = "0.2.5"
+reqwest = {version = "0.13.4", default-features = false, features = ["json", "query", "default-tls"]}
 reqwest-middleware = { version = "0.5.2", features = ["query", "json"] }
 reqwest-retry = "0.9.1"
+
 secrecy = "0.10.3"
-serde = "1.0.229"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
 thiserror = "2.0.20"
 url = "2.5.8"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

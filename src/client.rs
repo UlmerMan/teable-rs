@@ -1,23 +1,21 @@
 use crate::auth::{AuthProvider, PersonalAccessToken};
 use crate::errors::{ClientBuilderError, ClientError};
 
-use std::path;
-use std::time::Duration;
 use std::sync::Arc;
+use std::time::Duration;
 
-use reqwest::retry::Builder;
-use reqwest::{Body, Method, Url};
-use reqwest_middleware::ClientWithMiddleware;
+use reqwest::{Method, Url};
 use reqwest_middleware::ClientBuilder as MwClientBuilder;
+use reqwest_middleware::ClientWithMiddleware;
 use reqwest_retry::RetryTransientMiddleware;
-use reqwest_retry::policies::{ExponentialBackoff, ExponentialBackoffBuilder};
+use reqwest_retry::policies::ExponentialBackoff;
 use secrecy::SecretString;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 
 pub struct TeableClient {
     http: ClientWithMiddleware,
-    base_url: String,
+    base_url: Url,
     auth: Arc<dyn AuthProvider>,
 }
 
@@ -66,9 +64,9 @@ impl TeableClientBuilder {
 
     pub fn build(self) -> Result<TeableClient, ClientBuilderError> {
         let token = self.token.ok_or(ClientBuilderError::MissingToken)?;
-        let base_url = self.base_url.unwrap_or_else(|| {
-            Url::parse("https://app.teable.ai").expect("Invalid default URL")
-        });
+        let base_url = self
+            .base_url
+            .unwrap_or_else(|| Url::parse("https://app.teable.ai/api/").expect("Invalid default URL"));
 
         let inner_http = reqwest::Client::builder()
             .timeout(self.timeout)
@@ -76,8 +74,7 @@ impl TeableClientBuilder {
             .tls_danger_accept_invalid_certs(self.danger_accept_invalid_certs)
             .build()?;
 
-        let retry_policy = ExponentialBackoff::builder()
-            .build_with_max_retries(self.max_retries);
+        let retry_policy = ExponentialBackoff::builder().build_with_max_retries(self.max_retries);
 
         let http = MwClientBuilder::new(inner_http)
             .with(RetryTransientMiddleware::new_with_policy(retry_policy))
@@ -85,42 +82,93 @@ impl TeableClientBuilder {
 
         Ok(TeableClient {
             http,
-            base_url: base_url.to_string(),
+            base_url,
             auth: Arc::new(PersonalAccessToken::new(token)),
         })
     }
 }
 
+#[maybe_async::maybe_async]
 impl TeableClient {
-    pub async fn execute<Resp: DeserializeOwned>(
+    pub fn builder() -> TeableClientBuilder {
+        TeableClientBuilder::default()
+    }
+    pub async fn execute<Resp>(
         &self,
         method: Method,
         path: &str,
         query: Option<&impl Serialize>,
         body: Option<&impl Serialize>,
-    ) -> Result<Resp, ClientError> {
-        let url = Url::parse(&format!("{}{}", self.base_url, path))?;
+    ) -> Result<Resp, ClientError>
+    where
+        Resp: DeserializeOwned,
+    {
+        let url = self.base_url.join(path)?;
+
         let mut req = self.http.request(method, url);
+
         req = self.auth.apply(req);
 
         if let Some(query) = query {
             req = req.query(query);
         }
+
         if let Some(body) = body {
             req = req.json(body);
         }
 
-        let resp = req.send().await?;   // ← Achtung, siehe Punkt 5
+        let resp = req.send().await?;
 
         if !resp.status().is_success() {
-            return Err(ClientError::Api {
-                status: resp.status().as_u16(),
-                code: resp.status().to_string(),
-                message: resp.text().await?,
-            });
+            return Err(self.parse_api_error(resp).await);
         }
 
-        let body: Resp = resp.json().await?;
-        Ok(body)
+        Ok(resp.json::<Resp>().await?)
+    }
+
+    pub async fn execute_empty(
+        &self,
+        method: Method,
+        path: &str,
+        query: Option<&impl Serialize>,
+        body: Option<&impl Serialize>,
+    ) -> Result<(), ClientError> {
+        let url = self.base_url.join(path)?;
+
+        let mut req = self.http.request(method, url);
+
+        req = self.auth.apply(req);
+
+        if let Some(query) = query {
+            req = req.query(query);
+        }
+
+        if let Some(body) = body {
+            req = req.json(body);
+        }
+
+        let resp = req.send().await?;
+
+        if !resp.status().is_success() {
+            return Err(self.parse_api_error(resp).await);
+        }
+
+        Ok(())
+    }
+
+    async fn parse_api_error(&self, resp: reqwest::Response) -> ClientError {
+        let status = resp.status();
+
+        let message = match resp.text().await {
+            Ok(body) if !body.is_empty() => body,
+            Ok(_) => status.to_string(),
+            Err(err) => err.to_string(),
+        };
+
+        ClientError::Api {
+            status: status.as_u16(),
+            code: status.to_string(),
+            message,
+        }
     }
 }

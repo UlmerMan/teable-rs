@@ -18,7 +18,7 @@ pub enum ClientBuilderError {
 #[derive(Debug, Error)]
 pub enum ClientError {
     #[error("HTTP request failed: {0}")]
-    Http(#[from] reqwest::Error),   
+    Http(#[from] reqwest::Error),
 
     #[error("invalid URL: {0}")]
     InvalidUrl(#[from] url::ParseError),
@@ -27,5 +27,9 @@ pub enum ClientError {
     Middleware(#[from] reqwest_middleware::Error),
 
     #[error("Teable API error {status}: {code} — {message}")]
-    Api { status: u16, code: String, message: String },
+    Api {
+        status: u16,
+        code: String,
+        message: String,
+    },
 }
