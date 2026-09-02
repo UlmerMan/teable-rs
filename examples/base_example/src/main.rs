@@ -1,5 +1,5 @@
 use teable::client::TeableClient;
-use teable::models::base::CreateBaseRequest;
+use teable::models::base::{CreateBaseRequest, UpdateBaseRequest};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -45,6 +45,41 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(fetched.id, base.id);
     assert_eq!(fetched.name, base.name);
+
+    println!();
+    println!("Updating base...");
+
+    let updated = client
+        .bases()
+        .patch(
+            &base.id,
+            &UpdateBaseRequest {
+                name: Some("Rust SDK Updated Base".to_string()),
+                icon: Some("rocket".to_string()),
+            },
+        )
+        .await?;
+
+    println!("Updated base:");
+    println!("  name: {}", updated.name);
+
+    if let Ok(anchor_id) = std::env::var("TEABLE_ANCHOR_BASE_ID") {
+        println!();
+        println!("Updating base order...");
+
+        client
+            .bases()
+            .update_order(
+                &base.id,
+                &teable::models::base::order::Order {
+                    anchor_id,
+                    position: teable::models::base::order::Position::After,
+                },
+            )
+            .await?;
+
+        println!("Base order updated successfully.");
+    }
 
     println!();
     println!("Deleting base...");

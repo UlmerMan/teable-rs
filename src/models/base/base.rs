@@ -62,3 +62,20 @@ pub struct CreateBaseRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub template: Option<String>,
 }
+
+#[derive(Debug, Clone, Serialize)]
+pub struct UpdateBaseRequest {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct UpdateBaseResponse {
+    #[serde(rename = "spaceId")]
+    pub space_id: String,
+    pub name: String,
+    pub icon: Option<String>,
+}
