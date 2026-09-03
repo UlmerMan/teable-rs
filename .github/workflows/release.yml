@@ -68,7 +68,7 @@ jobs:
 
   github-release:
     name: Create GitHub Release
-    needs: [publish-crates-io, build-binaries]
+    needs: [publish-crates-io]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
