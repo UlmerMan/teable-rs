@@ -4,5 +4,5 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "lowercase")]
 pub enum CollaboratorType {
     Space,
-    Base
+    Base,
 }

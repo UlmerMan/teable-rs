@@ -2,9 +2,7 @@ use crate::client::TeableClient;
 use crate::errors::ClientError;
 use crate::models::base::collaborator::{GetCollaboratorsQuery, GetCollaboratorsResponse};
 use crate::models::base::order::Order;
-use crate::models::base::{
-    Base, PostBaseRequest, UpdateBaseRequest, UpdateBaseResponse,
-};
+use crate::models::base::{Base, PostBaseRequest, UpdateBaseRequest, UpdateBaseResponse};
 
 use reqwest::Method;
 
@@ -17,18 +15,10 @@ impl<'a> BasesApi<'a> {
     /**
      * Creates a new base in the specified space.
      * [See the API documentation](https://help.teable.ai/en/api-reference/base/post-base) for more information.
-    */
-    pub async fn post(
-        &self,
-        request: &PostBaseRequest,
-    ) -> Result<Base, ClientError> {
+     */
+    pub async fn post(&self, request: &PostBaseRequest) -> Result<Base, ClientError> {
         self.client
-            .execute(
-                Method::POST,
-                "base",
-                None::<&()>,
-                Some(request),
-            )
+            .execute(Method::POST, "base", None::<&()>, Some(request))
             .await
     }
 
@@ -36,10 +26,7 @@ impl<'a> BasesApi<'a> {
      * Fetches a base by its ID.
      * [See the API documentation](https://help.teable.ai/en/api-reference/base/get-base) for more information.
      */
-    pub async fn get(
-        &self,
-        base_id: &str,
-    ) -> Result<Base, ClientError> {
+    pub async fn get(&self, base_id: &str) -> Result<Base, ClientError> {
         self.client
             .execute(
                 Method::GET,
@@ -54,10 +41,7 @@ impl<'a> BasesApi<'a> {
      * Deletes a base by its ID.
      * [See the API documentation](https://help.teable.ai/en/api-reference/base/delete-base) for more information.
      */
-    pub async fn delete(
-        &self,
-        base_id: &str,
-    ) -> Result<(), ClientError> {
+    pub async fn delete(&self, base_id: &str) -> Result<(), ClientError> {
         self.client
             .execute_empty(
                 Method::DELETE,
@@ -91,11 +75,7 @@ impl<'a> BasesApi<'a> {
      * Updates the order of a base by its ID.
      * [See the API documentation](https://help.teable.ai/en/api-reference/base/put-base-order) for more information.
      */
-    pub async fn update_order(
-        &self,
-        base_id: &str,
-        order: &Order,
-    ) -> Result<(), ClientError> {
+    pub async fn update_order(&self, base_id: &str, order: &Order) -> Result<(), ClientError> {
         self.client
             .execute_empty(
                 Method::PUT,
@@ -112,12 +92,7 @@ impl<'a> BasesApi<'a> {
      */
     pub async fn get_base_access_all(&self) -> Result<Vec<Base>, ClientError> {
         self.client
-            .execute(
-                Method::GET,
-                "base/access/all",
-                None::<&()>,
-                None::<&()>,
-            )
+            .execute(Method::GET, "base/access/all", None::<&()>, None::<&()>)
             .await
     }
 

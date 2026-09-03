@@ -1,10 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{
-    collaborator_type::CollaboratorType,
-    role::Role,
-    template::Template,
-};
+use super::{collaborator_type::CollaboratorType, role::Role, template::Template};
 
 use crate::models::user::User;
 

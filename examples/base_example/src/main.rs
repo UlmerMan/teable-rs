@@ -3,14 +3,11 @@ use teable::models::base::{PostBaseRequest, UpdateBaseRequest};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let token = std::env::var("TEABLE_TOKEN")
-        .expect("TEABLE_TOKEN environment variable not set");
-    let space_id = std::env::var("TEABLE_SPACE_ID")
-        .expect("TEABLE_SPACE_ID environment variable not set");
+    let token = std::env::var("TEABLE_TOKEN").expect("TEABLE_TOKEN environment variable not set");
+    let space_id =
+        std::env::var("TEABLE_SPACE_ID").expect("TEABLE_SPACE_ID environment variable not set");
 
-    let client = TeableClient::builder()
-        .token(token)
-        .build()?;
+    let client = TeableClient::builder().token(token).build()?;
 
     println!("Creating base...");
 
@@ -22,10 +19,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         template: None,
     };
 
-    let base = client
-        .bases()
-        .post(&request)
-        .await?;
+    let base = client.bases().post(&request).await?;
 
     println!("Created base:");
     println!("  id:   {}", base.id);
@@ -34,10 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!();
     println!("Fetching base...");
 
-    let fetched = client
-        .bases()
-        .get(&base.id)
-        .await?;
+    let fetched = client.bases().get(&base.id).await?;
 
     println!("Fetched base:");
     println!("  id:   {}", fetched.id);
@@ -84,10 +75,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!();
     println!("Deleting base...");
 
-    client
-        .bases()
-        .delete(&base.id)
-        .await?;
+    client.bases().delete(&base.id).await?;
 
     println!("Base deleted successfully.");
 

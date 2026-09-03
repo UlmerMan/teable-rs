@@ -64,9 +64,9 @@ impl TeableClientBuilder {
 
     pub fn build(self) -> Result<TeableClient, ClientBuilderError> {
         let token = self.token.ok_or(ClientBuilderError::MissingToken)?;
-        let base_url = self
-            .base_url
-            .unwrap_or_else(|| Url::parse("https://app.teable.ai/api/").expect("Invalid default URL"));
+        let base_url = self.base_url.unwrap_or_else(|| {
+            Url::parse("https://app.teable.ai/api/").expect("Invalid default URL")
+        });
 
         let inner_http = reqwest::Client::builder()
             .timeout(self.timeout)
