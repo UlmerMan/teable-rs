@@ -2,6 +2,11 @@
 name = "teable"
 version = "0.0.1"
 edition = "2024"
+license = "GPL-3.0-only"
+description = "Async Rust SDK for the Teable API"
+readme = "README.md"
+keywords = ["teable", "sdk", "api", "rest"]
+categories = ["api-bindings", "web-programming::http-client"]
 
 [features]
 default = ["async"]
