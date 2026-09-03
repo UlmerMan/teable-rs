@@ -2,7 +2,7 @@ use crate::client::TeableClient;
 use crate::errors::ClientError;
 use crate::models::base::order::Order;
 use crate::models::base::{
-    Base, CreateBaseRequest, UpdateBaseRequest, UpdateBaseResponse,
+    Base, PostBaseRequest, UpdateBaseRequest, UpdateBaseResponse,
 };
 
 use reqwest::Method;
@@ -13,9 +13,13 @@ pub struct BasesApi<'a> {
 
 #[maybe_async::maybe_async]
 impl<'a> BasesApi<'a> {
-    pub async fn create(
+    /**
+     * Creates a new base in the specified space.
+     * [See the API documentation](https://help.teable.ai/en/api-reference/base/post-base) for more information.
+    */
+    pub async fn post(
         &self,
-        request: &CreateBaseRequest,
+        request: &PostBaseRequest,
     ) -> Result<Base, ClientError> {
         self.client
             .execute(
@@ -27,6 +31,10 @@ impl<'a> BasesApi<'a> {
             .await
     }
 
+    /**
+     * Fetches a base by its ID.
+     * [See the API documentation](https://help.teable.ai/en/api-reference/base/get-base) for more information.
+     */
     pub async fn get(
         &self,
         base_id: &str,
@@ -41,6 +49,10 @@ impl<'a> BasesApi<'a> {
             .await
     }
 
+    /**
+     * Deletes a base by its ID.
+     * [See the API documentation](https://help.teable.ai/en/api-reference/base/delete-base) for more information.
+     */
     pub async fn delete(
         &self,
         base_id: &str,
@@ -55,6 +67,10 @@ impl<'a> BasesApi<'a> {
             .await
     }
 
+    /**
+     * Updates a base by its ID.
+     * [See the API documentation](https://help.teable.ai/en/api-reference/base/patch-base) for more information.
+     */
     pub async fn patch(
         &self,
         base_id: &str,
@@ -70,6 +86,10 @@ impl<'a> BasesApi<'a> {
             .await
     }
 
+    /**
+     * Updates the order of a base by its ID.
+     * [See the API documentation](https://help.teable.ai/en/api-reference/base/put-base-order) for more information.
+     */
     pub async fn update_order(
         &self,
         base_id: &str,
@@ -81,6 +101,21 @@ impl<'a> BasesApi<'a> {
                 &format!("base/{base_id}/order"),
                 None::<&()>,
                 Some(order),
+            )
+            .await
+    }
+
+    /**
+     * Lists all bases in a space by its ID.
+     * [See the API documentation](https://help.teable.ai/en/api-reference/base/get-space-base) for more information.
+     */
+    pub async fn list_bases(&self, space_id: &str) -> Result<Vec<Base>, ClientError> {
+        self.client
+            .execute(
+                Method::GET,
+                &format!("space/{space_id}/base"),
+                None::<&()>,
+                None::<&()>,
             )
             .await
     }

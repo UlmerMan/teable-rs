@@ -4,4 +4,4 @@ pub mod template;
 pub mod base;
 pub mod order;
 
-pub use base::{Base, CreateBaseRequest, UpdateBaseRequest, UpdateBaseResponse};
+pub use base::{Base, PostBaseRequest, UpdateBaseRequest, UpdateBaseResponse};

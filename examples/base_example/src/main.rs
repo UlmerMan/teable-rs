@@ -1,5 +1,5 @@
 use teable::client::TeableClient;
-use teable::models::base::{CreateBaseRequest, UpdateBaseRequest};
+use teable::models::base::{PostBaseRequest, UpdateBaseRequest};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -14,7 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Creating base...");
 
-    let request = CreateBaseRequest {
+    let request = PostBaseRequest {
         space_id,
         name: "Rust SDK Test Base".to_string(),
         description: Some("Created by teable-rs example".to_string()),
@@ -24,7 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let base = client
         .bases()
-        .create(&request)
+        .post(&request)
         .await?;
 
     println!("Created base:");

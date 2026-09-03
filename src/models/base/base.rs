@@ -47,7 +47,7 @@ pub struct Base {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct CreateBaseRequest {
+pub struct PostBaseRequest {
     #[serde(rename = "spaceId")]
     pub space_id: String,
 
