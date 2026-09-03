@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+// TODO: Add support for the image generation option
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AiConfig {
     #[serde(rename = "modelKey")]
@@ -16,10 +18,22 @@ pub struct AiConfig {
 
     #[serde(rename = "attachPrompt")]
     pub attach_prompt: Option<String>,
+
+    #[serde(rename = "onlyAllowConfigurationOptions")]
+    pub only_allow_configuration_options: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum AiConfigType {
-    Extraxtion,
+    Extraction,
+    Summary,
+    Translation,
+    Improvement,
+    Customization,
+    Classification,
+    Tag,
+    ImageGeneration,
+    ImageCustomization,
+    Rating,
 }

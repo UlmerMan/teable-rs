@@ -53,7 +53,6 @@ pub enum CellValueType {
     DateTime,
 }
 
-
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum DBFieldType {
     TEXT,
@@ -62,5 +61,5 @@ pub enum DBFieldType {
     REAL,
     BLOB,
     JSON,
-    BOOLEAN
+    BOOLEAN,
 }
