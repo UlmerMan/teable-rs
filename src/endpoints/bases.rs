@@ -1,8 +1,8 @@
 use crate::client::TeableClient;
 use crate::errors::ClientError;
-use crate::models::base::collaborator::{GetCollaboratorsQuery, GetCollaboratorsResponse};
 use crate::models::base::order::Order;
 use crate::models::base::{Base, PostBaseRequest, UpdateBaseRequest, UpdateBaseResponse};
+use crate::models::user::collaborator::{GetCollaboratorsQuery, GetCollaboratorsResponse};
 
 use reqwest::Method;
 

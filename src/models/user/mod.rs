@@ -1,8 +1,15 @@
-use serde::{Deserialize, Serialize};
+pub mod role;
+pub mod user_struct;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct User {
-    pub id: String,
-    pub name: String,
-    pub avatar: String,
-}
+pub mod collaborator;
+pub mod collaborator_type;
+
+pub mod organization;
+
+pub use role::Role;
+pub use user_struct::User;
+
+pub use collaborator::Collaborator;
+pub use collaborator_type::CollaboratorType;
+
+pub use organization::Organization;

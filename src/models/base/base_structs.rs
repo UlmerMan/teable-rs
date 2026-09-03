@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::{collaborator_type::CollaboratorType, role::Role, template::Template};
+use super::template::Template;
 
-use crate::models::user::User;
+use crate::models::user::collaborator_type::CollaboratorType;
+use crate::models::user::{Role, User};
 
 /// A Teable base returned by the API.
 #[derive(Debug, Clone, Deserialize, Serialize)]
