@@ -46,9 +46,7 @@ impl From<String> for DeleteRecordRequest {
 
 impl From<Record> for DeleteRecordRequest {
     fn from(record: Record) -> Self {
-        DeleteRecordRequest {
-            id: record.id,
-        }
+        DeleteRecordRequest { id: record.id }
     }
 }
 

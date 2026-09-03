@@ -3,10 +3,10 @@ use reqwest::Method;
 use crate::{
     client::TeableClient,
     errors::ClientError,
-    models::{
-        record::{
-            query::GetRecordQuery,
-            record_structs::{CreateRecordsRequest, CreateRecordsResponse, Record, UpdateRecordRequest},
+    models::record::{
+        query::GetRecordQuery,
+        record_structs::{
+            CreateRecordsRequest, CreateRecordsResponse, Record, UpdateRecordRequest,
         },
     },
 };
@@ -17,12 +17,12 @@ pub struct RecordsApi<'a> {
 
 impl<'a> RecordsApi<'a> {
     /** Creates one or more records in a table.
-    * 
-    * [See the API documentation](https://help.teable.ai/en/api-reference/record/create-records) for more information.
-    *
-    * The field keys in each record are interpreted according to
-    * [`FieldKeyType`](crate::models::record::FieldKeyType).
-    */
+     *
+     * [See the API documentation](https://help.teable.ai/en/api-reference/record/create-records) for more information.
+     *
+     * The field keys in each record are interpreted according to
+     * [`FieldKeyType`](crate::models::record::FieldKeyType).
+     */
     pub async fn create_records(
         &self,
         table_id: &str,
@@ -62,11 +62,7 @@ impl<'a> RecordsApi<'a> {
      * Delete a record by its ID.
      * [See the API documentation](https://help.teable.ai/en/api-reference/record/delete-record) for more information.
      */
-    pub async fn delete_record(
-        &self,
-        table_id: &str,
-        record_id: &str,
-    ) -> Result<(), ClientError> {
+    pub async fn delete_record(&self, table_id: &str, record_id: &str) -> Result<(), ClientError> {
         self.client
             .execute_empty(
                 Method::DELETE,

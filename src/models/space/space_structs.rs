@@ -23,8 +23,6 @@ impl From<String> for PostSpaceRequest {
 
 impl From<Space> for PostSpaceRequest {
     fn from(space: Space) -> Self {
-        PostSpaceRequest {
-            name: space.name,
-        }
+        PostSpaceRequest { name: space.name }
     }
 }
