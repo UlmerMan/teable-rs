@@ -7,7 +7,6 @@ use teable::models::field::options::{FieldOptions, TextOptions};
 use teable::models::record::{
     CreateRecordsRequest, FieldKeyType, RecordUpdate, UpdateRecordRequest,
 };
-use teable::models::space::space_structs::PostSpaceRequest;
 use teable::models::table::PostTableRequest;
 
 #[tokio::main]
