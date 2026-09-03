@@ -9,7 +9,7 @@ use super::{
 use crate::models::user::User;
 
 /// A Teable base returned by the API.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Base {
     pub id: String,
     pub name: String,

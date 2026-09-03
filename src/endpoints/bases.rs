@@ -1,5 +1,6 @@
 use crate::client::TeableClient;
 use crate::errors::ClientError;
+use crate::models::base::collaborator::{GetCollaboratorsQuery, GetCollaboratorsResponse};
 use crate::models::base::order::Order;
 use crate::models::base::{
     Base, PostBaseRequest, UpdateBaseRequest, UpdateBaseResponse,
@@ -101,6 +102,40 @@ impl<'a> BasesApi<'a> {
                 &format!("base/{base_id}/order"),
                 None::<&()>,
                 Some(order),
+            )
+            .await
+    }
+
+    /**
+     * Fetches all bases the user has access to.
+     * [See the API documentation](https://help.teable.ai/en/api-reference/base/get-baseaccessall) for more information.
+     */
+    pub async fn get_base_access_all(&self) -> Result<Vec<Base>, ClientError> {
+        self.client
+            .execute(
+                Method::GET,
+                "base/access/all",
+                None::<&()>,
+                None::<&()>,
+            )
+            .await
+    }
+
+    /**
+     * Lists all collaborators of a base by its ID.
+     * [See the API documentation](https://help.teable.ai/en/api-reference/base/get-base-collaborators) for more information.
+     */
+    pub async fn get_collaborators(
+        &self,
+        base_id: &str,
+        query: Option<&GetCollaboratorsQuery>,
+    ) -> Result<GetCollaboratorsResponse, ClientError> {
+        self.client
+            .execute(
+                Method::GET,
+                &format!("base/{base_id}/collaborators"),
+                query,
+                None::<&()>,
             )
             .await
     }
