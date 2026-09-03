@@ -97,18 +97,18 @@ pub struct FieldBuilder {
 }
 
 impl Field {
-    pub fn builder(id: impl Into<String>, name: impl Into<String>, field_type: FieldType) -> FieldBuilder {
+    pub fn builder(
+        id: impl Into<String>,
+        name: impl Into<String>,
+        field_type: FieldType,
+    ) -> FieldBuilder {
         FieldBuilder::new(id, name, field_type)
     }
 }
 
 impl FieldBuilder {
     /// Starts a builder with the required field identity.
-    pub fn new(
-        id: impl Into<String>,
-        name: impl Into<String>,
-        field_type: FieldType,
-    ) -> Self {
+    pub fn new(id: impl Into<String>, name: impl Into<String>, field_type: FieldType) -> Self {
         Self {
             field: Field {
                 id: id.into(),
