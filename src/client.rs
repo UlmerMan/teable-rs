@@ -43,7 +43,14 @@ impl Default for TeableClientBuilder {
 
 impl TeableClientBuilder {
     pub fn base_url(mut self, url: impl Into<String>) -> Result<Self, ClientBuilderError> {
-        self.base_url = Some(Url::parse(&url.into())?);
+        let mut parsed = Url::parse(url.into().trim())?;
+        if parsed.path().is_empty() || parsed.path() == "/" {
+            parsed.set_path("/api/");
+        } else if !parsed.path().ends_with('/') {
+            let new_path = format!("{}/", parsed.path());
+            parsed.set_path(&new_path);
+        }
+        self.base_url = Some(parsed);
         Ok(self)
     }
 
